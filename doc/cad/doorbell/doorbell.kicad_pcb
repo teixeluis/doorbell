@@ -129,7 +129,7 @@
 			(mirror no)
 			(drillshape 0)
 			(scaleselection 1)
-			(outputdirectory "")
+			(outputdirectory "/home/lteixeira/projects/dev/home_automation/tasmota/doorbell/doc/cad/doorbell/")
 		)
 	)
 	(footprint "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm"
@@ -18282,8 +18282,7 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.25)
-				(bold yes)
+				(thickness 0.15)
 			)
 			(justify left bottom)
 		)
@@ -18295,8 +18294,7 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.25)
-				(bold yes)
+				(thickness 0.15)
 			)
 			(justify left bottom)
 		)
@@ -18308,8 +18306,7 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.25)
-				(bold yes)
+				(thickness 0.15)
 			)
 			(justify left bottom)
 		)
@@ -18321,8 +18318,7 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.25)
-				(bold yes)
+				(thickness 0.15)
 			)
 			(justify left bottom)
 		)
@@ -18334,8 +18330,7 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.25)
-				(bold yes)
+				(thickness 0.15)
 			)
 			(justify left bottom)
 		)
@@ -18347,8 +18342,7 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.25)
-				(bold yes)
+				(thickness 0.15)
 			)
 			(justify left bottom)
 		)
@@ -18360,8 +18354,55 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.25)
-				(bold yes)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
+	(gr_text "12VDC"
+		(at 154 46.699526 0)
+		(layer "F.SilkS")
+		(uuid "58622046-ed2b-4f1d-b23d-b5872160db15")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
+	(gr_text "BELL PCB"
+		(at 193.302838 46.648135 0)
+		(layer "F.SilkS")
+		(uuid "e5c0be47-70d0-450a-ad36-28bd02f67657")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
+	(gr_text "SPK"
+		(at 214 107 90)
+		(layer "F.SilkS")
+		(uuid "3e9b3b8f-fd70-49da-b99c-20e13e827cc8")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
+	(gr_text "VOL"
+		(at 214.180877 91.5 90)
+		(layer "F.SilkS")
+		(uuid "eb3a8df3-09ee-4ea9-81ce-1d35e7324fad")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
 			)
 			(justify left bottom)
 		)
@@ -18379,62 +18420,10 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "12VDC"
-		(at 154 46.699526 0)
-		(layer "F.SilkS")
-		(uuid "58622046-ed2b-4f1d-b23d-b5872160db15")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.25)
-				(bold yes)
-			)
-			(justify left bottom)
-		)
-	)
-	(gr_text "BELL PCB"
-		(at 193.302838 46.648135 0)
-		(layer "F.SilkS")
-		(uuid "e5c0be47-70d0-450a-ad36-28bd02f67657")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.25)
-				(bold yes)
-			)
-			(justify left bottom)
-		)
-	)
 	(gr_text "+"
 		(at 211 102.5 90)
 		(layer "F.SilkS")
 		(uuid "5330418e-e4f6-4406-b33c-8a2a0bc14718")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.25)
-				(bold yes)
-			)
-			(justify left bottom)
-		)
-	)
-	(gr_text "SPK"
-		(at 214 107 90)
-		(layer "F.SilkS")
-		(uuid "3e9b3b8f-fd70-49da-b99c-20e13e827cc8")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.25)
-				(bold yes)
-			)
-			(justify left bottom)
-		)
-	)
-	(gr_text "VOL"
-		(at 214.180877 91.5 90)
-		(layer "F.SilkS")
-		(uuid "eb3a8df3-09ee-4ea9-81ce-1d35e7324fad")
 		(effects
 			(font
 				(size 1 1)
