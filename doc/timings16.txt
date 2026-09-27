@@ -1,6 +1,0 @@
-153-161 Timing: Times: 320.000 µs (3.125 kHz)
-161-253 Timing: Times: 3.680 ms (271.739 Hz)
-253-261 Timing: Times: 320.000 µs (3.125 kHz)
-153-161 Timing: Averages: 320.000 µs (3.125 kHz)
-161-253 Timing: Averages: 2.000 ms (500.000 Hz)
-253-261 Timing: Averages: 1.440 ms (694.444 Hz)

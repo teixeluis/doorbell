@@ -1,2 +1,0 @@
-253-261 Timing: Times: 320.000 µs (3.125 kHz)
-253-261 Timing: Averages: 320.000 µs (3.125 kHz)
