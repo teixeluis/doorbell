@@ -38,16 +38,17 @@ of being the CMT2210LH 433 MHz OOK/ASK receiver:
 ![Doorbell receiver](doc/images/doorbell_rx.jpeg)
 
 Then there is what apparently is the microcontroller where probably the raw (digital) signal 
-is decoded into recognizable frames, and (as I latter learned) where the bitstream containing
-the sequence of sounds to be played is stored and played. By tapping into the output pins, 
-I could see this flow of bits being output while the sound / melody was being played.
+discriminated by the radio chip, is decoded into recognizable frames, and (as I latter learned) 
+where the bitstream containing the sequence of sounds to be played is stored and played. 
+By tapping into the output pins, I could see this flow of bits being output while the 
+sound / melody was being played.
 
 Lastly the audio chip, which appears to be a combination of FM (or similar synthesis function)
 and analog audio production and amplification. Two of the pins of this last 8-pin chip, are
 connected directly to the small built-in speaker.
 
-Conveniently, in the back of this PCB there were test pads allowing access to all of these
-relevant pins, and also the speaker pins.
+Conveniently, in the back of the receiver PCB there were test pads allowing access to all of these
+relevant signals, and also the speaker pins.
 
 ### My expansion board
 
@@ -55,21 +56,21 @@ With these findings I had more than enough material for my goal. Having a signal
 when the melody starts playing, would be a solid indication that someone had pressed the 
 doorbell button. Also, I could go a bit further by taking into consideration that I could 
 also tap into the song selection and volume buttons, allowing me to also control these 
-in my integration.
+via software.
 
 As such, I went on to build a board allowing me to:
 
  * power the doorbell original PCB and the expansion board itself. The doorbell originally
 operated at 5 Volts but by testing, I could tell that it was equally happy running at 3.3 Volts.
 For my design this was a major difference, because it meant a substantial saving in components
-and in complexity;
+and complexity;
  * allow events from the doorbell to be mediated into the home automation via an ESP32
 microcontroller;
  * control the playback, volume and song selection through the ESP32;
  * nice to have - inject my own sequences, creating new melodies / sounds (TBD);
- * have a more powerful speaker and audio output - addition of external audio OPAMP.
+ * have a more powerful speaker and audio output through the addition of an external audio OPAMP.
 
-With this in mind, so I did. Keeping the design simple while allowing for providing the functions
+With this in mind, so I went. Keeping the design simple while allowing for providing the functions
 described above.
 
 #### Project
@@ -133,4 +134,6 @@ than the concrete added value of achieving it.
 
 ## Included materials
 
-In this project you can find the Tasmota / Berry source code for the test script I mentioned, as well as in the hardware/cad/doorbell section, the schematic and cad drawings.
+In this project you can find the Tasmota / Berry source code for the test script I mentioned, 
+as well as in the hardware/cad/doorbell section, the schematic and CAD drawings. There are
+also a few footprint customizations.
