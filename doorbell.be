@@ -26,7 +26,7 @@ sequence = [320,320,320,2080,400,320,1600,320,880,320,2480,240,3760,320,1760,320
 
 bell_playing = 0
 
-bell_topic = 'stat/doorbell/EVENT'
+BELL_TOPIC = 'stat/ovalesublime-doorbell/EVENT'
 
 var last_event
 
@@ -73,8 +73,7 @@ class bell_detector
 
     if bell_state == 0 && delta_time > EVENT_WAIT
         last_event = curr_time
-        # TODO change event payload:
-        mqtt.publish(bell_topic, "1")
+        mqtt.publish(BELL_TOPIC, "{\"event_type\": \"ringing\"}")
     end
   end
 
@@ -84,7 +83,7 @@ class bell_detector
   end
 end
 
-tasmota.add_driver(bell_detector())                     # register driver
+tasmota.add_driver(bell_detector())
 tasmota.add_fast_loop(/-> bell_detector.fast_loop()) 
 
 init()
