@@ -51,16 +51,19 @@ end
 def song()
     gpio.digital_write(SONG_PIN, 0)
     tasmota.set_timer(500, /-> gpio.digital_write(SONG_PIN, 1))
+    tasmota.resp_cmnd_done()
 end
 
 def vol()
     gpio.digital_write(VOL_PIN, 0)
     tasmota.set_timer(3000, /-> gpio.digital_write(VOL_PIN, 1))
+    tasmota.resp_cmnd_done()
 end
 
 def play()
     gpio.digital_write(VOL_PIN, 0)
     tasmota.set_timer(100, /-> gpio.digital_write(VOL_PIN, 1))
+    tasmota.resp_cmnd_done()
 end
 
 class bell_detector
@@ -82,6 +85,10 @@ class bell_detector
     tasmota.add_fast_loop(/-> self.fast_loop())
   end
 end
+
+tasmota.add_cmd('BellPlay', play)
+tasmota.add_cmd('BellVol', vol)
+tasmota.add_cmd('BellSong', song)
 
 tasmota.add_driver(bell_detector())
 tasmota.add_fast_loop(/-> bell_detector.fast_loop()) 
