@@ -14,13 +14,18 @@
 
 import gpio
 import mqtt
+import ULP
 
 INPUT_PIN = 22
 OUTPUT_PIN = 21
 VOL_PIN = 19
 SONG_PIN = 18
+WAKE_PIN = 4
 
 EVENT_WAIT = 30000
+WAKE_PERIOD = 20000
+DEEP_SLEEP_TIME = 300
+ACTIVE_TIME = 30000
 
 sequence = [320,320,320,2080,400,320,1600,320,880,320,2480,240,3760,320,1760,320,1600,320,880,320,1760,400,320,240,3080,360,320,320,240,240,240,320,3040,320,320,320,320,640,320,320,320,400,1280,320,1360,320,320,720,320,320,1280,320,2000,320,320,320,320,720,320,1280,400,320,640,320,320,320,2000,320,320,640,320,400,560,320,400,4960,320,320,640,320,640,320,400,4880,320,640,400,320,640,320,320,320,6880,320,320,320,640,400,320,960,960,320,1040,320,640,640,320,320,320,320,320,1040,320,640,640,640,640,640,1680,320,640,640,640,720,320,320,320,320,320,320,320,320,2960,320,960,320,240,320,400,320,2880,320,1040,320,960,640,640,640,1040,320,320,320,3520,320,320,400,320,320,320,320,320,400,320,320,320,320,2320,320,640,320,720,640,320,320,2000,320,320,400,320,640,320,320,1040,320,640,320,1040,400,640,320,320,640,2320,640,320,400,2640,320,640,320,2720,320,640,320,2640,320,640,320,2640,400,640,320,320,3680,320,320,3680,320,320,3680,320]
 
@@ -86,6 +91,34 @@ class bell_detector
   end
 end
 
+def deep_sleep_init()
+    # Poll the input every 20 ms
+    ULP.wake_period(0, WAKE_PERIOD)
+
+    # Original ESP32: GPIO4 = RTC_GPIO10
+    var io_num = ULP.gpio_init(WAKE_PIN, 0)
+
+    # ULP FSM binary implementing GPIO edge detection
+    var c = bytes().fromb64("dWxwAAwAzAAAABgAgwOAcg8AANA8AIBwEAAJggkBuC4wAMBwKAAAgAkB+C8PASByMADAcBAAQHIzA4ByDwAA0DMAAHAfAEByVABAgFMDgHJCA4ByDwAA0AsAAGgAAACwQwOAcg4AANAKAABycABAgBoAIHIOAABoAAAAsFMDgHJCA4ByDwAA0AsAAGgzA4ByDgAA0BoAAHIaAEByDgAAaGMDgHIOAADQGgAAcg4AAGhzA4ByDwAA0C8AIHC4AECAAAAAsDAAzCkQAEByuABAgAEAAJAAAACw")
+
+    ULP.load(c)
+    c = nil
+
+    # Configure GPIO wake-up
+    ULP.set_mem(50, 1)       # Expect rising edge
+    ULP.set_mem(54, 0)       # Initial edge counter
+    ULP.set_mem(55, 1)       # Wake after one edge
+    ULP.set_mem(56, io_num)  # RTC GPIO number
+
+    # Start ULP
+    ULP.run()
+end
+
+def deep_sleep_start()
+    # Enter deep sleep and wake up every 5 mins:
+    ULP.sleep(DEEP_SLEEP_TIME)
+end
+
 tasmota.add_cmd('BellPlay', play)
 tasmota.add_cmd('BellVol', vol)
 tasmota.add_cmd('BellSong', song)
@@ -94,4 +127,7 @@ tasmota.add_driver(bell_detector())
 tasmota.add_fast_loop(/-> bell_detector.fast_loop()) 
 
 init()
-#play_sequence()
+deep_sleep_init()
+
+# Stay awaken for some time before going back to sleep:
+#tasmota.set_timer(ACTIVE_TIME, deep_sleep_start)
