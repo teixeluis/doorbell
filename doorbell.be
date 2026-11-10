@@ -23,9 +23,10 @@ SONG_PIN = 18
 WAKE_PIN = 4
 
 EVENT_WAIT = 30000
-WAKE_PERIOD = 20000
-DEEP_SLEEP_TIME = 300
-ACTIVE_TIME = 30000
+WAKE_PERIOD = 30000
+DEEP_SLEEP_TIME = 20
+ACTIVE_TIME = 2000
+MELODY_TIME = 20000
 
 sequence = [320,320,320,2080,400,320,1600,320,880,320,2480,240,3760,320,1760,320,1600,320,880,320,1760,400,320,240,3080,360,320,320,240,240,240,320,3040,320,320,320,320,640,320,320,320,400,1280,320,1360,320,320,720,320,320,1280,320,2000,320,320,320,320,720,320,1280,400,320,640,320,320,320,2000,320,320,640,320,400,560,320,400,4960,320,320,640,320,640,320,400,4880,320,640,400,320,640,320,320,320,6880,320,320,320,640,400,320,960,960,320,1040,320,640,640,320,320,320,320,320,1040,320,640,640,640,640,640,1680,320,640,640,640,720,320,320,320,320,320,320,320,320,2960,320,960,320,240,320,400,320,2880,320,1040,320,960,640,640,640,1040,320,320,320,3520,320,320,400,320,320,320,320,320,400,320,320,320,320,2320,320,640,320,720,640,320,320,2000,320,320,400,320,640,320,320,1040,320,640,320,1040,400,640,320,320,640,2320,640,320,400,2640,320,640,320,2720,320,640,320,2640,320,640,320,2640,400,640,320,320,3680,320,320,3680,320,320,3680,320]
 
@@ -91,7 +92,7 @@ class bell_detector
   end
 end
 
-def deep_sleep_init()
+def deep_sleep()
     # Poll the input every 20 ms
     ULP.wake_period(0, WAKE_PERIOD)
 
@@ -112,11 +113,23 @@ def deep_sleep_init()
 
     # Start ULP
     ULP.run()
-end
 
-def deep_sleep_start()
     # Enter deep sleep and wake up every 5 mins:
     ULP.sleep(DEEP_SLEEP_TIME)
+end
+
+# Stay awaken for some time before going back to sleep:
+def deep_sleep_now()
+    tasmota.set_timer(ACTIVE_TIME, deep_sleep)
+end
+
+def on_mqtt_connected()
+    if gpio.counter_read(0) > 0
+        mqtt.publish(BELL_TOPIC, "{\"event_type\": \"ringing\"}")
+
+    end
+
+    tasmota.set_timer(MELODY_TIME, /-> gpio.counter_set(0, 0))
 end
 
 tasmota.add_cmd('BellPlay', play)
@@ -125,9 +138,7 @@ tasmota.add_cmd('BellSong', song)
 
 tasmota.add_driver(bell_detector())
 tasmota.add_fast_loop(/-> bell_detector.fast_loop()) 
+tasmota.add_rule("MQTT#Connected", on_mqtt_connected)
 
 init()
-deep_sleep_init()
 
-# Stay awaken for some time before going back to sleep:
-#tasmota.set_timer(ACTIVE_TIME, deep_sleep_start)
