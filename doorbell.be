@@ -73,8 +73,6 @@ def play()
 end
 
 class bell_detector
-  var last_event
-
   def fast_loop()
     var curr_time = tasmota.millis() 
     var delta_time = curr_time - last_event
