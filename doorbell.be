@@ -15,6 +15,8 @@
 import gpio
 import mqtt
 import ULP
+import persist
+
 
 INPUT_PIN = 22
 OUTPUT_PIN = 21
@@ -24,16 +26,16 @@ WAKE_PIN = 4
 
 EVENT_WAIT = 30000
 WAKE_PERIOD = 30000
-DEEP_SLEEP_TIME = 20
-ACTIVE_TIME = 2000
-MELODY_TIME = 20000
+DEEP_SLEEP_TIME = 600
+SLEEP_DELAY = 30000
 
 # Wake-up causes:
 WAKEUP_ULP = 6
+BELL_TOPIC = 'stat/ovalesublime-doorbell/EVENT'
 
 sequence = [320,320,320,2080,400,320,1600,320,880,320,2480,240,3760,320,1760,320,1600,320,880,320,1760,400,320,240,3080,360,320,320,240,240,240,320,3040,320,320,320,320,640,320,320,320,400,1280,320,1360,320,320,720,320,320,1280,320,2000,320,320,320,320,720,320,1280,400,320,640,320,320,320,2000,320,320,640,320,400,560,320,400,4960,320,320,640,320,640,320,400,4880,320,640,400,320,640,320,320,320,6880,320,320,320,640,400,320,960,960,320,1040,320,640,640,320,320,320,320,320,1040,320,640,640,640,640,640,1680,320,640,640,640,720,320,320,320,320,320,320,320,320,2960,320,960,320,240,320,400,320,2880,320,1040,320,960,640,640,640,1040,320,320,320,3520,320,320,400,320,320,320,320,320,400,320,320,320,320,2320,320,640,320,720,640,320,320,2000,320,320,400,320,640,320,320,1040,320,640,320,1040,400,640,320,320,640,2320,640,320,400,2640,320,640,320,2720,320,640,320,2640,320,640,320,2640,400,640,320,320,3680,320,320,3680,320,320,3680,320]
 
-BELL_TOPIC = 'stat/ovalesublime-doorbell/EVENT'
+default_sleep_enable = 0
 
 var last_event
 
@@ -45,6 +47,11 @@ def init()
     gpio.digital_write(OUTPUT_PIN, 1)
     gpio.digital_write(VOL_PIN, 1)
     gpio.digital_write(SONG_PIN, 1)
+	
+	if !persist.has('sleep_enable')
+        persist.sleep_enable = default_sleep_enable
+        persist.save()
+    end
 end
 
 def play_sequence()
@@ -92,7 +99,7 @@ class bell_detector
 end
 
 def deep_sleep()
-    # Poll the input every 20 ms
+    # Poll the input every WAKE_PERIOD us
     ULP.wake_period(0, WAKE_PERIOD)
 
     # Original ESP32: GPIO4 = RTC_GPIO10
@@ -119,22 +126,41 @@ end
 
 # Stay awaken for some time before going back to sleep:
 def deep_sleep_now()
-    tasmota.set_timer(ACTIVE_TIME, deep_sleep)
+    tasmota.set_timer(SLEEP_DELAY, deep_sleep, "sleep_delay")
+end
+
+def enable_sleep()
+    persist.sleep_enable = 1
+	persist.save()
+	deep_sleep_now()
+    tasmota.resp_cmnd_done()
+end
+
+def disable_sleep()
+    persist.sleep_enable = 0
+	persist.save()
+	tasmota.remove_timer("sleep_delay")
+    tasmota.resp_cmnd_done()
 end
 
 def on_mqtt_connected()
     if tasmota.wakeup_cause() == WAKEUP_ULP
         mqtt.publish(BELL_TOPIC, "{\"event_type\": \"ringing\"}")
     end
+
+    if persist.sleep_enable == 1
+        deep_sleep_now()
+    end
 end
+
+init()
 
 tasmota.add_cmd('BellPlay', play)
 tasmota.add_cmd('BellVol', vol)
 tasmota.add_cmd('BellSong', song)
+tasmota.add_cmd('EnableSleep', enable_sleep)
+tasmota.add_cmd('DisableSleep', disable_sleep)
 
 tasmota.add_driver(bell_detector())
 tasmota.add_fast_loop(/-> bell_detector.fast_loop()) 
 tasmota.add_rule("MQTT#Connected", on_mqtt_connected)
-
-init()
-
